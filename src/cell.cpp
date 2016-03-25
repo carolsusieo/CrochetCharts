@@ -145,6 +145,22 @@ void Cell::setStitch(Stitch *s)
     
     setTransformOriginPoint(s->width()/2, s->height());
 }
+// carol - update to allow cut, undo etc
+// of stitches to be reflected in the pattern stitches
+// docking tab
+void Cell::emitStitchChanged(QString s)
+{
+
+    QString old = s;
+    if (mStitch) {
+        old = mStitch->name();
+    }
+
+    if(s == old)
+        emit stitchChanged(old);
+    else
+        emit stitchChanged(old,old);
+}
 
 void Cell::setBgColor(QColor c)
 {

@@ -335,6 +335,7 @@ AddItem::AddItem(Scene *scene, QGraphicsItem *item, QUndoCommand *parent)
 
     i = item;
     s = scene;
+    newStitch = s->getEditStitch();
     setText(QObject::tr("add items"));
 }
 
@@ -348,11 +349,17 @@ AddItem::~AddItem()
 void AddItem::redo()
 {
     add(s, i);
+    QString oldStitch("");
+
+    s->addItemRedo(oldStitch,i);
 }
 
 void AddItem::undo()
 {
+    // carol, need to possibly remove the icon from the pattern stitches.
+
     RemoveItem::remove(s, i);
+    s->addItemUndo(newStitch,i);
 }
 
 void AddItem::add(Scene *scene, QGraphicsItem *item)
@@ -369,17 +376,28 @@ RemoveItem::RemoveItem(Scene *scene, QGraphicsItem *item, QUndoCommand *parent)
     i = item;
     s = scene;
     position = i->pos();
+    //carol
+    oldStitch = s->getEditStitch();
     setText(QObject::tr("remove items"));
 }
 
 void RemoveItem::redo()
 {
     remove(s, i);
+    s->removeItemRedo(oldStitch,i);
 }
 
 void RemoveItem::undo()
 {
+    // carol - we have added the removal of the item from the pattern stitches,
+    // so now it is possible that we need to add back the item to the pattern stitches.
     AddItem::add(s, i);
+    // so, how are we going to queue it to ADD the stitch back in to pattern stitches?
+    // need to set up all the local connects that allow us to connect back.....
+    //
+    QString newStitch("");
+    s->removeItemUndo(newStitch,i);
+
 }
 
 void RemoveItem::remove(Scene *scene, QGraphicsItem *item)

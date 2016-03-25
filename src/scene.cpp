@@ -244,6 +244,7 @@ void Scene::addItem(QGraphicsItem* item)
         case Cell::Type: {
             QGraphicsScene::addItem(item);
             Cell* c = qgraphicsitem_cast<Cell*>(item);
+            // in  crochettab we connect to a slot - called stitchChanged and we implement stitchChanged there, as well
             connect(c, SIGNAL(stitchChanged(QString,QString)), SIGNAL(stitchChanged(QString,QString)));
             connect(c, SIGNAL(colorChanged(QString,QString)), SIGNAL(colorChanged(QString,QString)));
             break;
@@ -278,6 +279,44 @@ void Scene::addItem(QGraphicsItem* item)
     }
 
 }
+void Scene::addItemRedo(QString string1,QGraphicsItem* item)
+{
+    // we need to have the item added back into the pattern stitches.
+    if(item->type() == Cell::Type)
+    {
+        Cell* c = qgraphicsitem_cast<Cell*>(item);
+        c->emitStitchChanged(string1);
+
+    }
+}
+void Scene::addItemUndo(QString string1,QGraphicsItem* item)
+{
+    if(item->type() == Cell::Type)
+    {
+        Cell* c = qgraphicsitem_cast<Cell*>(item);
+         c->emitStitchChanged(string1);
+    }
+
+}
+void Scene::removeItemUndo(QString string1,QGraphicsItem* item)
+{
+    // we need to have the item added back into the pattern stitches.
+    if(item->type() == Cell::Type)
+    {
+        Cell* c = qgraphicsitem_cast<Cell*>(item);
+        c->emitStitchChanged(string1);
+
+    }
+}
+void Scene::removeItemRedo(QString string1,QGraphicsItem* item)
+{
+    if(item->type() == Cell::Type)
+    {
+        Cell* c = qgraphicsitem_cast<Cell*>(item);
+        c->emitStitchChanged(string1);
+    }
+
+}
 
 void Scene::removeItem(QGraphicsItem* item)
 {
@@ -288,6 +327,10 @@ void Scene::removeItem(QGraphicsItem* item)
         case Cell::Type: {
             QGraphicsScene::removeItem(item);
             Cell* c = qgraphicsitem_cast<Cell*>(item);
+            // carol because a removal needs to be reflected in pattern stitches
+            // this sets up what to do when the emit call is made by setStitch
+            connect(c, SIGNAL(stitchChanged(QString)), SIGNAL(stitchChanged(QString)));
+            //connect(c, SIGNAL(colorChanged(QString,QString)), SIGNAL(colorChanged(QString,QString)));
             removeFromRows(c);
             break;
         }
@@ -2927,6 +2970,16 @@ void Scene::cut()
             case Cell::Type: {
                 Cell *c = qgraphicsitem_cast<Cell*>(item);
                 undoStack()->push(new RemoveItem(this, c));
+                // carol
+                // if this was a stitch that was cut... we need to determine if
+                // it was the last of it's type... setStitch emits the
+                // stitchChanged routine that will update pattern stitches
+                // a problem exists, now, if we try to undo the removeStitch, it
+                // undoes it by placing the chain stitch in the place of the removed
+                // stitch.
+                c->emitStitchChanged(mEditStitch);
+                //c->setStitch(mEditStitch);
+
                 break;
             }
             case Indicator::Type: {

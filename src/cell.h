@@ -57,6 +57,8 @@ public:
 
     void setStitch(Stitch *s);
     void setStitch(QString s);
+    // carol
+    void emitStitchChanged(QString oldSt);
     Stitch* stitch() const { return mStitch; }
 	
 	unsigned int layer() { return mLayer; }
@@ -70,7 +72,7 @@ public:
     void useAlternateRenderer(bool useAlt);
     
 signals:
-    void stitchChanged(QString oldSt, QString newSt);
+    void stitchChanged(QString oldSt, QString newSt = 0);
     void colorChanged(QString oldColor, QString newColor);
     void bgColorChanged(QString oldColor, QString newColor);
     

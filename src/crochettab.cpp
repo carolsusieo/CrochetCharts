@@ -174,18 +174,30 @@ void CrochetTab::renderChart(QPainter* painter, QRectF rect)
 void CrochetTab::stitchChanged(QString oldSt, QString newSt)
 {
 
+    bool change = false;
     if (!oldSt.isEmpty()) {
-        mPatternStitches->operator[](oldSt)--;
+        if(mPatternStitches->operator[](oldSt))
+            mPatternStitches->operator[](oldSt)--;
         if (mPatternStitches->operator[](oldSt) == 0)
+        {
             mPatternStitches->remove(oldSt);
+            change = true;
+        }
     }
 
-    if (!mPatternStitches->contains(newSt))
-        mPatternStitches->insert(newSt, 1);
-    else
-        mPatternStitches->operator[](newSt)++;
+    if(!newSt.isEmpty())
+    {
+        if (!mPatternStitches->contains(newSt))
+        {
+            mPatternStitches->insert(newSt, 1);
+            change = true;
+        }
+        else
+            mPatternStitches->operator[](newSt)++;
 
-    emit chartStitchChanged();
+    }
+    if(change)
+        emit chartStitchChanged();
 }
 
 void CrochetTab::colorChanged(QString oldColor, QString newColor)

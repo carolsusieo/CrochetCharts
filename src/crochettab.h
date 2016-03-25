@@ -128,7 +128,7 @@ public slots:
     void zoomIn();
     void zoomOut();
 
-    void stitchChanged(QString oldSt, QString newSt);
+    void stitchChanged(QString oldSt, QString newSt = 0);
     void colorChanged(QString oldColor, QString newColor);
 	void layersChangedSlot(QList<ChartLayer*>& layers, ChartLayer* selected);
 

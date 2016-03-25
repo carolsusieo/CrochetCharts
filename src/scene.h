@@ -166,6 +166,7 @@ public:
 	Scene::SelectMode selectMode() const;
 
     void setEditStitch(QString stitch) { mEditStitch = stitch; }
+    QString getEditStitch() { return mEditStitch; }
 
     void setEditFgColor(QColor color) { mEditFgColor = color; }
     void setEditBgColor(QColor color) { mEditBgColor = color; }
@@ -201,7 +202,11 @@ public:
     void createBlankChart();
 
     void addItem(QGraphicsItem *item);
+    void addItemUndo(QString string, QGraphicsItem *item);
+    void addItemRedo(QString string,QGraphicsItem *item);
     void removeItem(QGraphicsItem *item);
+    void removeItemUndo(QString string,QGraphicsItem *item2);
+    void removeItemRedo(QString string,QGraphicsItem *item);
 
 	//returns the current layer and creates a new layer if no layer is currently selected
 	ChartLayer* getCurrentLayer();
@@ -301,7 +306,7 @@ public slots:
     
 signals:
 	void showPropertiesSignal();
-    void stitchChanged(QString oldSt, QString newSt);
+    void stitchChanged(QString oldSt, QString newSt = 0);
     void colorChanged(QString oldColor, QString newColor);
 	void layersChanged(QList<ChartLayer*>& layers, ChartLayer* selected);
 

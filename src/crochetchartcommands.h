@@ -260,6 +260,7 @@ public:
 private:
     QGraphicsItem *i;
     Scene *s;
+    QString newStitch;
 };
 
 class RemoveItem : public QUndoCommand
@@ -281,6 +282,7 @@ private:
     QPointF position;
 
     Scene *s;
+    QString oldStitch;
 };
 
 class RemoveItems : public QUndoCommand
